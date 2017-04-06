@@ -89,7 +89,7 @@ ServerEvent.on('isMailExistResult', function(data, socket) {
 *														Initialisation des variables												   *
 ***********************************************************************************/
 // Ouverture de la socket
-io.sockets.on('connection', function (socket) {
+io.on('connection', function (socket) {
   
   console.log('Client Connecté');
   
