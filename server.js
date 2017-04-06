@@ -83,6 +83,8 @@ io.sockets.on('connection', function (socket) {
   
   console.log('Client Connecté');
   
+  socket.emit('pong', 'test...');
+  
   socket.on('ping', function(data) {
     console.log('data: ', data);
   	socket.emit('pong', 'Bravo ! Tu es connecté sur le serveur global');
@@ -90,14 +92,6 @@ io.sockets.on('connection', function (socket) {
 	
 // 	socket.on('isPseudoExist', function(data) {
 // 		ServerEvent.emit('isPseudoExist', data, socket);
-// 	});
-	
-// 	socket.on('IamTheClientPrinter', function() {
-// 		if (check.emptyString(printerClientId)) {
-//   		printerClientId = socket.id;
-// 			console.log('Printer Client Found');
-// 			console.log(socket.id);
-// 		}
 // 	});
 	
 	
