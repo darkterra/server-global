@@ -22,6 +22,7 @@ const os            = require('os');
 const moment        = require('moment');
 const socketio      = require('socket.io');
 const path          = require('path');
+const session       = require('express-session');
 
 
 // Server Events
@@ -44,6 +45,14 @@ colors.setTheme({
   error   : 'red'
 });
 
+// Conf session
+const EXPRESS_SID_VALUE = 'Secret Keyboard DarkTerra Cat';
+const sessionMiddleware = session({
+  secret              : EXPRESS_SID_VALUE,
+  resave              : false,
+  saveUninitialized   : true,
+  // store               : new MongoStore({ mongooseConnection: mongoose.connection })
+});
 
 // Conf port
 const port = 18000;
@@ -56,6 +65,7 @@ app.use(compression({filter: shouldCompress}));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
+app.use(sessionMiddleware);
 app.use(require('morgan')("combined", { "stream": logger.stream }));
 
 app.use(express.static(path.join(__dirname)));
@@ -66,9 +76,9 @@ app.use(express.static(path.join(__dirname)));
 let io  = socketio(http);
     
 	// Configuration de Socket.IO pour pouvoir avoir accès au sessions
-// 	io.use(function(socket, next) {
-// 		sessionMiddleware(socket.request, socket.request.res, next);
-// 	});
+	io.use(function(socket, next) {
+		sessionMiddleware(socket.request, socket.request.res, next);
+	});
 	
 ServerEvent.on('isMailExistResult', function(data, socket) {
 	socket.emit('isMailExist', data);
