@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <title>Serveur Global</title>
+  </head>
+  <body>
+    <p>Hello World !</p>
+    <br />
+    <p>Essaye d'envoyer un 'ping' en WebSocket, je te renverais un message si tu écoute 'pong' ;)</p>
+    
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      var socket = io('http://server-global-youngjeremy.c9users.io');
+    </script>
+    
+  </body>
+</html>
