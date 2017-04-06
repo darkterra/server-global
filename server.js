@@ -100,6 +100,7 @@ io.on('connection', function (socket) {
   	socket.emit('pong', 'Bravo ! Tu es connecté sur le serveur global');
   });
 	
+	socket.emit('plop', 'Juu Plop');
 // 	socket.on('isPseudoExist', function(data) {
 // 		ServerEvent.emit('isPseudoExist', data, socket);
 // 	});
