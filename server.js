@@ -93,11 +93,11 @@ io.on('connection', function (socket) {
   
   console.log('Client Connecté');
   
-  socket.emit('pong', 'test...');
+  // socket.emit('pong', 'test...');
   
-  socket.on('ping', function(data) {
+  socket.on('init', function(data) {
     console.log('data: ', data);
-  	socket.emit('pong', 'Bravo ! Tu es connecté sur le serveur global');
+  	socket.emit('plop', 'Bravo ! Tu es connecté sur le serveur global');
   });
 	
 	socket.emit('plop', 'Juu Plop');
