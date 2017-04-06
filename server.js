@@ -23,6 +23,7 @@ const moment        = require('moment');
 const socketio      = require('socket.io');
 const path          = require('path');
 const session       = require('express-session');
+const check         = require('type-check').typeCheck;
 
 
 // Server Events
@@ -57,6 +58,7 @@ const sessionMiddleware = session({
 // Conf port
 const port = 18000;
 
+// Controller
 const logger      = require('./logger');
 
 
@@ -71,19 +73,15 @@ app.use(require('morgan')("combined", { "stream": logger.stream }));
 app.use(express.static(path.join(__dirname)));
 
 
-// Socket io
-
+// Variables
 let io  = socketio(http);
+let tab = [];
     
-	// Configuration de Socket.IO pour pouvoir avoir accès au sessions
-	io.use(function(socket, next) {
-		sessionMiddleware(socket.request, socket.request.res, next);
-	});
-	
-ServerEvent.on('isMailExistResult', function(data, socket) {
-	socket.emit('isMailExist', data);
-	console.log('EmitClient: isMailExistResult');
+// Configuration de Socket.IO pour pouvoir avoir accès au sessions
+io.use(function(socket, next) {
+	sessionMiddleware(socket.request, socket.request.res, next);
 });
+
 
 /***********************************************************************************
 *														Initialisation des variables												   *
@@ -93,17 +91,35 @@ io.on('connection', function (socket) {
   
   console.log('Client Connecté');
   
-  // socket.emit('pong', 'test...');
-  
   socket.on('init', function(data) {
-    console.log('data: ', data);
   	socket.emit('plop', 'Bravo ! Tu es connecté sur le serveur global');
   });
 	
-	socket.emit('plop', 'Juu Plop');
-// 	socket.on('isPseudoExist', function(data) {
-// 		ServerEvent.emit('isPseudoExist', data, socket);
-// 	});
+	socket.on('sendUpdate', function(data) {
+    checkObject(data, function(err, result) {
+      if (err) {
+        socket.emit('errorOnProjectUpdate', `Error : ${err}`);
+      }
+      else {
+        var element = tab.find(x => x.nameService === data.nameService);
+        if (element) {
+          tab.splice(tab.indexOf(element), 1);
+        }
+        tab.push(result);
+        socket.emit('projectUpdated', tab);
+      }
+    });
+  });
+  socket.on('deleteProject', function(data) {
+    console.log('Delete the Project: ', data);
+    var element = tab.find(x => x.nameService === data.nameService);
+    if (element) {
+      tab.splice(tab.indexOf(element), 1);
+    }
+    else {
+      socket.emit('errorOnProjectUpdate', `Error : Project not found...`);
+    }
+  });
 	
 	
 	// ----------------------- Décompte uniquement des User Connecté ----------------------- //
@@ -111,6 +127,33 @@ io.on('connection', function (socket) {
 		console.log('Client Disconnect');
 	});
 });
+
+
+let templateObject = `{
+    nameService : String, 
+    projects :
+    [
+      {
+        name : String,
+        desc : String,
+        daysOff : { M : Boolean, T : Boolean,  W : Boolean, T : Boolean, F : Boolean, S : Boolean, S : Boolean },
+        workingHours : { start : Number, end : Number },
+        task : [{ id : Number, name : String, desc : String, percentageProgress : Number, linkedTask : Array, ressources : Array }],
+        groupTask : [{ name : String, start : Number, end : Number }],
+        resources : [{ name : String, cost : Number, type : String }],
+        milestones : [{ name : String, date : Number }]
+      }
+    ]
+  }`
+
+function checkObject (data, callback) {
+  if (check(templateObject, data)) {
+    callback(undefined, data);
+  }
+  else {
+    callback(`Type de l'objet incorrect...\nVoici le template de vérification, vérifiez que vous envoyer un objet ayant la même strucure :\n${templateObject}`);
+  }
+}
 
 /***********************************************************************************
 *												Différentes possibilité d'émissions											   *
