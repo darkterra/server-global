@@ -93,13 +93,14 @@ io.use(function(socket, next) {
 // Ouverture de la socket
 io.on('connection', function (socket) {
   
-  console.log('Client Connecté');
+  console.log(`Client Connecté : ${socket.id}`);
   
   socket.on('needHelp', function(data) {
   	socket.emit('info', messageHelp);
   });
 	
 	socket.on('sendUpdate', function(data) {
+	  console.log(`sendUpdate fired by : ${socket.id}. MAJ de : ${data.nameService}`);
     checkObject(data, function(err, result) {
       if (err) {
         socket.emit('errorOnProjectUpdate', `Error : ${err}`);
@@ -118,8 +119,9 @@ io.on('connection', function (socket) {
     });
   });
   socket.on('deleteService', function(data) {
+	  console.log(`deleteService fired by : ${socket.id}. Suppression de ${data}`);
     console.log('Delete the Project: ', data);
-    var element = tab.find(x => x.nameService === data.nameService);
+    var element = tab.find(x => x.nameService === data);
     if (element) {
       tab.splice(tab.indexOf(element), 1);
     }
@@ -143,7 +145,7 @@ let templateObject = `{
       {
         name : String,
         desc : String,
-        daysOff : { M : Boolean, T : Boolean,  W : Boolean, T : Boolean, F : Boolean, S : Boolean, S : Boolean },
+        daysOff : { Mo : Boolean, Tu : Boolean,  We : Boolean, Th : Boolean, Fr : Boolean, Sa : Boolean, Su : Boolean },
         workingHours : { start : Number, end : Number },
         task : [{ id : Number, name : String, desc : String, percentageProgress : Number, linkedTask : Array, ressources : Array }],
         groupTask : [{ name : String, start : Number, end : Number }],
@@ -151,7 +153,7 @@ let templateObject = `{
         milestones : [{ name : String, date : Number }]
       }
     ]
-  }`
+  }`;
 
 function checkObject (data, callback) {
   if (check(templateObject, data)) {
