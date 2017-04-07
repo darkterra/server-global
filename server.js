@@ -118,7 +118,7 @@ io.on('connection', function (socket) {
         }
         servicies.push(result);
         owners.push({id : socket.id, nameService : result.nameService});
-        socket.emit('projectUpdated', servicies);
+        io.sockets.emit('projectUpdated', servicies);
         if (servicies.length > tabLenghtMax) {
           console.log(`Le nombre de service est anormalement élever : ${servicies.length}, le nombre maximal est configuré à : ${tabLenghtMax}`);
         }
