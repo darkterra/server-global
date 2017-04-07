@@ -76,7 +76,8 @@ app.use(express.static(path.join(__dirname)));
 // Variables
 const io           = socketio(http);
 const tabLenghtMax = 8;
-let tab            = [];
+let servicies      = [];
+let owners         = [];
 let messageHelp    = `Bravo ! Tu es connecté sur le serveur global
 tu peux utiliser l'emit "sendUpdate" pour envoyer une MAJ de tes données, l'émit "deleteService" pour supprimer le service (groupe) et l'ensemble des projets
 tu peux ecouter sur "projectUpdated" pour recevoir l'ensemble de tous les projets de tous les services (groupes), tu peux aussi écouter "errorOnProjectUpdate" pour savoir si il y a eu une erreur lors d'une MAJ`;
@@ -106,14 +107,15 @@ io.on('connection', function (socket) {
         socket.emit('errorOnProjectUpdate', `Error : ${err}`);
       }
       else {
-        var element = tab.find(x => x.nameService === data.nameService);
+        var element = servicies.find(x => x.nameService === data.nameService);
         if (element) {
-          tab.splice(tab.indexOf(element), 1);
+          servicies.splice(servicies.indexOf(element), 1);
         }
-        tab.push(result);
-        socket.emit('projectUpdated', tab);
-        if (tab.length > tabLenghtMax) {
-          console.log(`Le nombre de service est anormalement élever : ${tab.length}, le nombre maximal est configuré à : ${tabLenghtMax}`);
+        servicies.push(result);
+        owners.push({id : socket.id, nameService : result.nameService});
+        socket.emit('projectUpdated', servicies);
+        if (servicies.length > tabLenghtMax) {
+          console.log(`Le nombre de service est anormalement élever : ${servicies.length}, le nombre maximal est configuré à : ${tabLenghtMax}`);
         }
       }
     });
@@ -121,9 +123,11 @@ io.on('connection', function (socket) {
   socket.on('deleteService', function(data) {
 	  console.log(`deleteService fired by : ${socket.id}. Suppression de ${data}`);
     console.log('Delete the Project: ', data);
-    var element = tab.find(x => x.nameService === data);
-    if (element) {
-      tab.splice(tab.indexOf(element), 1);
+    var element = servicies.find(x => x.nameService === data);
+    var checkOwner = owners.find(x => x.id === socket.id && x.nameService === data);
+    if (element && checkOwner) {
+      servicies.splice(servicies.indexOf(element), 1);
+      owners.splice(owners.indexOf(checkOwner), 1);
     }
     else {
       socket.emit('errorOnProjectUpdate', `Error : Project not found...`);
@@ -134,6 +138,8 @@ io.on('connection', function (socket) {
 	// ----------------------- Décompte uniquement des User Connecté ----------------------- //
 	socket.on('disconnect', function() {
 		console.log('Client Disconnect');
+		var checkOwner = owners.find(x => x.id === socket.id);
+		owners.splice(owners.indexOf(checkOwner), 1);
 	});
 });
 
