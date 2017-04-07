@@ -145,7 +145,8 @@ io.on('connection', function (socket) {
 		console.log(`Client Disconnect : ${socket.id}`);
 		var checkOwner = owners.find(x => x.id === socket.id);
 		owners.splice(owners.indexOf(checkOwner), 1);
-		console.log(owners);
+		console.log('owners: ', owners);
+		console.log('services: ', servicies);
 	});
 });
 
