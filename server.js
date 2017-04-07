@@ -91,8 +91,10 @@ io.on('connection', function (socket) {
   
   console.log('Client Connecté');
   
-  socket.on('init', function(data) {
-  	socket.emit('plop', 'Bravo ! Tu es connecté sur le serveur global');
+  socket.on('needHelp', function(data) {
+  	socket.emit('info', `Bravo ! Tu es connecté sur le serveur global
+tu peux utiliser l'emit "sendUpdate" pour envoyer une MAJ de tes données, l'émit "deleteProjects" pour supprimer l'ensemble des projets
+tu peux ecouter sur "projectUpdated" pour recevoir l'ensemble de tous les projets de tous les services (groupes), tu peux aussi écouter "errorOnProjectUpdate" pour savoir si il y a eu une erreur lors d'une MAJ`);
   });
 	
 	socket.on('sendUpdate', function(data) {
@@ -110,7 +112,7 @@ io.on('connection', function (socket) {
       }
     });
   });
-  socket.on('deleteProject', function(data) {
+  socket.on('deleteProjects', function(data) {
     console.log('Delete the Project: ', data);
     var element = tab.find(x => x.nameService === data.nameService);
     if (element) {
