@@ -99,6 +99,11 @@ io.on('connection', function (socket) {
   socket.on('needHelp', function(data) {
   	socket.emit('info', messageHelp);
   });
+  
+  socket.on('getServices', function(data) {
+	  console.log(`getServices fired by : ${socket.id}. Suppression de ${data}`);
+    socket.emit('servicies', servicies);
+  });
 	
 	socket.on('sendUpdate', function(data) {
 	  console.log(`sendUpdate fired by : ${socket.id}. MAJ de : ${data.nameService}`);
