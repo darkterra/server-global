@@ -142,9 +142,10 @@ io.on('connection', function (socket) {
 	
 	// ----------------------- Décompte uniquement des User Connecté ----------------------- //
 	socket.on('disconnect', function() {
-		console.log('Client Disconnect');
+		console.log(`Client Disconnect : ${socket.id}`);
 		var checkOwner = owners.find(x => x.id === socket.id);
 		owners.splice(owners.indexOf(checkOwner), 1);
+		console.log(owners);
 	});
 });
 
