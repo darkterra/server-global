@@ -74,8 +74,12 @@ app.use(express.static(path.join(__dirname)));
 
 
 // Variables
-let io  = socketio(http);
-let tab = [];
+const io           = socketio(http);
+const tabLenghtMax = 8;
+let tab            = [];
+let messageHelp    = `Bravo ! Tu es connecté sur le serveur global
+tu peux utiliser l'emit "sendUpdate" pour envoyer une MAJ de tes données, l'émit "deleteService" pour supprimer le service (groupe) et l'ensemble des projets
+tu peux ecouter sur "projectUpdated" pour recevoir l'ensemble de tous les projets de tous les services (groupes), tu peux aussi écouter "errorOnProjectUpdate" pour savoir si il y a eu une erreur lors d'une MAJ`;
     
 // Configuration de Socket.IO pour pouvoir avoir accès au sessions
 io.use(function(socket, next) {
@@ -92,9 +96,7 @@ io.on('connection', function (socket) {
   console.log('Client Connecté');
   
   socket.on('needHelp', function(data) {
-  	socket.emit('info', `Bravo ! Tu es connecté sur le serveur global
-tu peux utiliser l'emit "sendUpdate" pour envoyer une MAJ de tes données, l'émit "deleteService" pour supprimer le service (groupe) et l'ensemble des projets
-tu peux ecouter sur "projectUpdated" pour recevoir l'ensemble de tous les projets de tous les services (groupes), tu peux aussi écouter "errorOnProjectUpdate" pour savoir si il y a eu une erreur lors d'une MAJ`);
+  	socket.emit('info', messageHelp);
   });
 	
 	socket.on('sendUpdate', function(data) {
@@ -109,6 +111,9 @@ tu peux ecouter sur "projectUpdated" pour recevoir l'ensemble de tous les projet
         }
         tab.push(result);
         socket.emit('projectUpdated', tab);
+        if (tab.length > tabLenghtMax) {
+          console.log(`Le nombre de service est anormalement élever : ${tab.length}, le nombre maximal est configuré à : ${tabLenghtMax}`);
+        }
       }
     });
   });
