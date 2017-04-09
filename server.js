@@ -114,19 +114,20 @@ io.on('connection', function (socket) {
       else {
         var checkOwner = owners.find(x => x.id === socket.id);
         var element = servicies.find(x => x.nameService === data.nameService);
-        if (checkOwner) {
-          if (element) {
-            servicies.splice(servicies.indexOf(element), 1);
-          }
+        if (element && !checkOwner){
+          socket.emit('errorOnProjectUpdate', `Error : Tu n'a pas le droit de modifier ce service`);
+        }
+        if (element && checkOwner) {
+          servicies.splice(servicies.indexOf(element), 1);
+        }
+        element = servicies.find(x => x.nameService === data.nameService);
+        if (!element) {
           servicies.push(result);
           owners.push({id : socket.id, nameService : result.nameService});
           io.sockets.emit('projectUpdated', servicies);
           if (servicies.length > tabLenghtMax) {
             console.log(`Le nombre de service est anormalement élever : ${servicies.length}, le nombre maximal est configuré à : ${tabLenghtMax}`);
           }
-        }
-        else {
-          socket.emit('errorOnProjectUpdate', `Error : Tu n'a pas le droit de modifier ce service`);
         }
       }
     });
