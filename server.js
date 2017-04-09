@@ -80,7 +80,8 @@ let servicies      = [];
 let owners         = [];
 let messageHelp    = `Bravo ! Tu es connecté sur le serveur global
 tu peux utiliser l'emit "sendUpdate" pour envoyer une MAJ de tes données, l'émit "deleteService" pour supprimer le service (groupe) et l'ensemble des projets
-tu peux ecouter sur "projectUpdated" pour recevoir l'ensemble de tous les projets de tous les services (groupes), tu peux aussi écouter "errorOnProjectUpdate" pour savoir si il y a eu une erreur lors d'une MAJ`;
+tu peux ecouter sur "projectUpdated" pour recevoir l'ensemble de tous les projets de tous les services (groupes), tu peux aussi écouter "errorOnProjectUpdate" pour savoir si il y a eu une erreur lors d'une MAJ
+Bonus: tu peux appeler l'event "getServices" pour demander au serveur central de te renvoyer la liste des services, pour cela il faudra écouter l'event "servicies"`;
     
 // Configuration de Socket.IO pour pouvoir avoir accès au sessions
 io.use(function(socket, next) {
@@ -153,9 +154,11 @@ io.on('connection', function (socket) {
 		console.log(`Client Disconnect : ${socket.id}, servicies: ${JSON.stringify(servicies)}`);
 		var checkOwner = owners.find(x => x.id === socket.id);
 		console.log('checkOwner: ', checkOwner);
-    var element = servicies.find(x => x.nameService === checkOwner.nameService);
-		owners.splice(owners.indexOf(checkOwner), 1);
-    servicies.splice(servicies.indexOf(element), 1);
+		if (checkOwner) {
+      var element = servicies.find(x => x.nameService === checkOwner.nameService);
+  		owners.splice(owners.indexOf(checkOwner), 1);
+      servicies.splice(servicies.indexOf(element), 1);
+		}
 	});
 });
 
