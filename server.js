@@ -140,6 +140,7 @@ io.on('connection', function (socket) {
     if (element && checkOwner) {
       servicies.splice(servicies.indexOf(element), 1);
       owners.splice(owners.indexOf(checkOwner), 1);
+      io.sockets.emit('projectUpdated', servicies);
     }
     else {
       socket.emit('errorOnProjectUpdate', `Error : Project not found...`);
