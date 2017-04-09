@@ -147,8 +147,6 @@ io.on('connection', function (socket) {
     var element = servicies.find(x => x.nameService === checkOwner.nameService);
 		owners.splice(owners.indexOf(checkOwner), 1);
     servicies.splice(servicies.indexOf(element), 1);
-		console.log('owners: ', owners);
-		console.log('services: ', servicies);
 	});
 });
 
@@ -162,7 +160,7 @@ let templateObject = `{
         desc : String,
         daysOff : { Mo : Boolean, Tu : Boolean,  We : Boolean, Th : Boolean, Fr : Boolean, Sa : Boolean, Su : Boolean },
         workingHours : { start : Number, end : Number },
-        task : [{ id : Number, name : String, desc : String, percentageProgress : Number, linkedTask : Array, ressources : Array }],
+        task : [{ id : Number, name : String, desc : String, start : Number, end : Number, percentageProgress : Number, color : String, linkedTask : Array, ressources : Array }],
         groupTask : [{ name : String, start : Number, end : Number }],
         resources : [{ name : String, cost : Number, type : String }],
         milestones : [{ name : String, date : Number }]
