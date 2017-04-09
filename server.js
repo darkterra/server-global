@@ -144,7 +144,7 @@ io.on('connection', function (socket) {
       io.sockets.emit('projectUpdated', servicies);
     }
     else {
-      socket.emit('errorOnProjectUpdate', `Error : Project not found...`);
+      socket.emit('errorOnProjectUpdate', `Error : Service not found...`);
     }
   });
 	
