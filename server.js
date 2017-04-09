@@ -101,8 +101,8 @@ io.on('connection', function (socket) {
   	socket.emit('info', messageHelp);
   });
   
-  socket.on('getServices', function(data) {
-	  console.log(`getServices fired by : ${socket.id}. Suppression de ${data}`);
+  socket.on('getServices', function() {
+	  console.log(`getServices fired by : ${socket.id}`);
     socket.emit('servicies', servicies);
   });
 	
@@ -135,7 +135,7 @@ io.on('connection', function (socket) {
   });
   socket.on('deleteService', function(data) {
 	  console.log(`deleteService fired by : ${socket.id}. Suppression de ${data}`);
-    console.log('Delete the Project: ', data);
+    console.log('Delete the Service: ', data);
     var element = servicies.find(x => x.nameService === data);
     var checkOwner = owners.find(x => x.id === socket.id && x.nameService === data);
     if (element && checkOwner) {
@@ -151,9 +151,8 @@ io.on('connection', function (socket) {
 	
 	// ----------------------- Décompte uniquement des User Connecté ----------------------- //
 	socket.on('disconnect', function() {
-		console.log(`Client Disconnect : ${socket.id}, servicies: ${JSON.stringify(servicies)}`);
+		console.log(`Client Disconnect : ${socket.id}`);
 		var checkOwner = owners.find(x => x.id === socket.id);
-		console.log('checkOwner: ', checkOwner);
 		if (checkOwner) {
       var element = servicies.find(x => x.nameService === checkOwner.nameService);
   		owners.splice(owners.indexOf(checkOwner), 1);
