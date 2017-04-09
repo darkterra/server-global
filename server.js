@@ -110,12 +110,14 @@ io.on('connection', function (socket) {
 	  console.log(`sendUpdate fired by : ${socket.id}. MAJ de : ${data.nameService}`);
     checkObject(data, function(err, result) {
       if (err) {
+        console.log(`Tentative de MAJ échouer de : ${socket.id}`);
         socket.emit('errorOnProjectUpdate', `Error : ${err}`);
       }
       else {
         var checkOwner = owners.find(x => x.id === socket.id);
         var element = servicies.find(x => x.nameService === data.nameService);
         if (element && !checkOwner){
+          console.log(`Tentative de MAJ échouer de : ${socket.id}, element: ${element}, checkOwner: ${checkOwner}`);
           socket.emit('errorOnProjectUpdate', `Error : Tu n'a pas le droit de modifier ce service`);
         }
         if (element && checkOwner) {
@@ -144,6 +146,7 @@ io.on('connection', function (socket) {
       io.sockets.emit('projectUpdated', servicies);
     }
     else {
+      console.log(`Tentative de RM échouer de : ${socket.id}, element: ${element}, checkOwner: ${checkOwner}`);
       socket.emit('errorOnProjectUpdate', `Error : Service not found...`);
     }
   });
