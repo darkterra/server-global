@@ -149,7 +149,7 @@ io.on('connection', function (socket) {
 	
 	// ----------------------- Décompte uniquement des User Connecté ----------------------- //
 	socket.on('disconnect', function() {
-		console.log(`Client Disconnect : ${socket.id}, servicies: ${servicies}`);
+		console.log(`Client Disconnect : ${socket.id}, servicies: ${JSON.stringify(servicies)}`);
 		var checkOwner = owners.find(x => x.id === socket.id);
     var element = servicies.find(x => x.nameService === checkOwner.nameService);
 		owners.splice(owners.indexOf(checkOwner), 1);
